@@ -8,7 +8,8 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "[name].[chunkhash].js",
+        filename: "[name].[hash].js",
+        publicPath: "/",
     },
     module: {
         rules: [
@@ -50,6 +51,7 @@ module.exports = {
                     chunks: "all",
                 },
             },
+            chunks: "all",
         },
     },
     devServer: {
@@ -57,7 +59,7 @@ module.exports = {
             directory: path.join(__dirname, "dist"),
         },
         historyApiFallback: {
-            index: "/index.html", // Đảm bảo tất cả request được chuyển về index.html
+            index: "/index.html",
         },
         compress: true,
         port: 9000,
@@ -67,5 +69,6 @@ module.exports = {
             writeToDisk: true, // Thêm dòng này để ghi file vào thư mục dist
         },
     },
-    mode: "production",
+    mode: "development",
+    devtool: "eval-source-map",
 };

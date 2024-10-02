@@ -5,13 +5,10 @@ import {
 
 import {
   createBrowserRouter,
-  createRoutesFromElements,
-  Route,
+  Navigate,
 } from 'react-router-dom';
 
 import DefaultLayout from '@/layouts/default-layout/DefaultLayout';
-
-import RootLayout from './layouts/root-layout/RootLayout';
 
 const LoginPage = lazy(() => import("@/pages/login-page"));
 const HomePage = lazy(() => import("@/pages/home-page"));
@@ -25,53 +22,66 @@ const withSuspense = (node, fallback) => {
     return <Suspense fallback={fallback}>{node}</Suspense>;
 };
 
+const CheckPermissionRole = ({ element }) => {
+    const isAdmin = true;
+    if (isAdmin) {
+        return element;
+    } else {
+        return <Navigate to="/" replace />;
+    }
+};
+
 const routeList = [
     {
-        id: 1,
+        path: "/login",
+        element: withSuspense(<LoginPage />),
+    },
+    {
         path: "/",
-        element: withSuspense(<HomePage />),
+        element: <DefaultLayout />,
+        children: [
+            {
+                path: "",
+                element: withSuspense(<HomePage />),
+            },
+            {
+                path: "products",
+                element: (
+                    <CheckPermissionRole
+                        element={withSuspense(<ManageProductsPage />)}
+                    />
+                ),
+            },
+            {
+                path: "products/create",
+                element: (
+                    <CheckPermissionRole
+                        element={withSuspense(<CreateProductPage />)}
+                    />
+                ),
+            },
+            {
+                path: "products/:productId",
+                element: withSuspense(<ProductDetailPage />),
+            },
+            {
+                path: "products/:productId/update",
+                element: (
+                    <CheckPermissionRole
+                        element={withSuspense(<UpdateProductPage />)}
+                    />
+                ),
+            },
+        ],
     },
     {
-        id: 2,
-        path: "products",
-        element: withSuspense(<ManageProductsPage />),
-    },
-    {
-        id: 3,
-        path: "products/create",
-        element: withSuspense(<CreateProductPage />),
-    },
-    {
-        id: 4,
-        path: "products/:productId",
-        element: withSuspense(<ProductDetailPage />),
-    },
-    {
-        id: 5,
-        path: "products/:productId/update",
-        element: withSuspense(<UpdateProductPage />),
+        path: "*",
+        element: withSuspense(<Error404 />),
     },
 ];
 
 const getRouteList = () => {
-    return createBrowserRouter(
-        createRoutesFromElements(
-            <Route element={<RootLayout />}>
-                <Route path="login" element={withSuspense(<LoginPage />)} />
-                <Route path="/" element={<DefaultLayout />}>
-                    {routeList.map((route) => (
-                        <Route
-                            key={route.id}
-                            path={route.path}
-                            element={route.element}
-                        />
-                    ))}
-                </Route>
-                {/* Page not found */}
-                <Route path="*" element={withSuspense(<Error404 />)} />
-            </Route>
-        )
-    );
+    return createBrowserRouter(routeList);
 };
 
 export default getRouteList;

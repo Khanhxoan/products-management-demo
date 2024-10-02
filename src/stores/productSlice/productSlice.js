@@ -2,6 +2,7 @@ import {
   createProduct,
   deleteProduct,
   getListProducts,
+  getProductDetail,
   updateProduct,
 } from '@/apis/product';
 import {
@@ -9,27 +10,26 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 
-const API_URL = "https://api.example.com/products";
-
-// Thunk để lấy danh sách sản phẩm
 export const getProductsThunk = createAsyncThunk(
     "products/getProducts",
     getListProducts
 );
 
-// Thunk để tạo mới sản phẩm
+export const getProductDetailThunk = createAsyncThunk(
+    "products/getProductDetail",
+    getProductDetail
+);
+
 export const createProductThunk = createAsyncThunk(
     "products/createProduct",
     createProduct
 );
 
-// Thunk để cập nhật sản phẩm
 export const updateProductThunk = createAsyncThunk(
     "products/updateProduct",
     updateProduct
 );
 
-// Thunk để xóa sản phẩm
 export const deleteProductThunk = createAsyncThunk(
     "products/deleteProduct",
     deleteProduct
@@ -39,33 +39,42 @@ const productSlice = createSlice({
     name: "products",
     initialState: {
         products: [],
-        loading: false,
+        productDetail: {},
+        loadingGetProducts: false,
         error: null,
+        loadingDetailProduct: false,
         // Loading for create udpate
         loadingCU: false,
         // Loading delete
         loadingDelete: false,
     },
-    reducers: {},
+    reducers: {
+        getProductDetailAction: (state, action) => {
+            state.productDetail = { ...action.payload };
+        },
+    },
     extraReducers: (builder) => {
         builder
-            // Lấy danh sách sản phẩm
+            // Get products
             .addCase(getProductsThunk.pending, (state) => {
-                state.loading = true;
+                state.loadingGetProducts = true;
             })
             .addCase(getProductsThunk.fulfilled, (state, action) => {
-                state.loading = false;
-                state.products = action.payload;
+                state.loadingGetProducts = false;
+                state.products = action.payload.data?.products ?? [];
             })
             .addCase(getProductsThunk.rejected, (state, action) => {
-                state.loading = false;
+                state.loadingGetProducts = false;
                 state.error = action.error.message;
             })
-            // Tạo mới sản phẩm
+
+            // Create product
             .addCase(createProductThunk.fulfilled, (state, action) => {
                 state.products.push(action.payload);
             })
-            // Cập nhật sản phẩm
+            .addCase(createProductThunk.rejected, (state, action) => {})
+
+            // Update product
             .addCase(updateProductThunk.fulfilled, (state, action) => {
                 const index = state.products.findIndex(
                     (product) => product.id === action.payload.id
@@ -74,7 +83,18 @@ const productSlice = createSlice({
                     state.products[index] = action.payload;
                 }
             })
-            // Xóa sản phẩm
+
+            // Product Detail
+            .addCase(getProductDetailThunk.pending, (state, action) => {
+                state.loadingDetailProduct = true;
+            })
+            .addCase(getProductDetailThunk.fulfilled, (state, action) => {
+                const productDetailRes = action.payload.data ?? {};
+                state.productDetail = { ...productDetailRes };
+                state.loadingDetailProduct = false;
+            })
+
+            // Delete product
             .addCase(deleteProductThunk.fulfilled, (state, action) => {
                 state.products = state.products.filter(
                     (product) => product.id !== action.payload
@@ -83,4 +103,5 @@ const productSlice = createSlice({
     },
 });
 
+export const { getProductDetailAction } = productSlice.actions;
 export default productSlice.reducer;

@@ -1,7 +1,7 @@
-import axios from "axios";
-import qs from "qs";
+import axios from 'axios';
+import qs from 'qs';
 
-const baseURL = "";
+const baseURL = "https://product-management-server-expressjs.vercel.app";
 
 export const defaultAxios = axios.create({
     baseURL: baseURL,
