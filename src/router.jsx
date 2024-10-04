@@ -1,14 +1,12 @@
-import {
-  lazy,
-  Suspense,
-} from 'react';
+import { lazy, Suspense } from "react";
 
-import {
-  createBrowserRouter,
-  Navigate,
-} from 'react-router-dom';
+import { useSelector } from "react-redux";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import DefaultLayout from '@/layouts/default-layout/DefaultLayout';
+import DefaultLayout from "@/layouts/default-layout/DefaultLayout";
+
+import { ROLE_USERS } from "./constants/contants";
+import RootLayout from "./layouts/root-layout/RootLayout";
 
 const LoginPage = lazy(() => import("@/pages/login-page"));
 const HomePage = lazy(() => import("@/pages/home-page"));
@@ -23,60 +21,55 @@ const withSuspense = (node, fallback) => {
 };
 
 const CheckPermissionRole = ({ element }) => {
-    const isAdmin = true;
+    const { user } = useSelector((state) => state.auth);
+    const isAdmin = String(user?.role).toUpperCase() === ROLE_USERS.ADMIN;
     if (isAdmin) {
         return element;
     } else {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/login" replace />;
     }
 };
 
 const routeList = [
     {
-        path: "/login",
-        element: withSuspense(<LoginPage />),
-    },
-    {
         path: "/",
-        element: <DefaultLayout />,
+        element: withSuspense(<RootLayout />),
         children: [
             {
-                path: "",
-                element: withSuspense(<HomePage />),
+                path: "/login",
+                element: withSuspense(<LoginPage />),
             },
             {
-                path: "products",
-                element: (
-                    <CheckPermissionRole
-                        element={withSuspense(<ManageProductsPage />)}
-                    />
-                ),
+                path: "/",
+                element: <DefaultLayout />,
+                children: [
+                    {
+                        path: "",
+                        element: withSuspense(<HomePage />),
+                    },
+                    {
+                        path: "products",
+                        element: <CheckPermissionRole element={withSuspense(<ManageProductsPage />)} />,
+                    },
+                    {
+                        path: "products/create",
+                        element: <CheckPermissionRole element={withSuspense(<CreateProductPage />)} />,
+                    },
+                    {
+                        path: "products/:productId",
+                        element: withSuspense(<ProductDetailPage />),
+                    },
+                    {
+                        path: "products/:productId/update",
+                        element: <CheckPermissionRole element={withSuspense(<UpdateProductPage />)} />,
+                    },
+                ],
             },
             {
-                path: "products/create",
-                element: (
-                    <CheckPermissionRole
-                        element={withSuspense(<CreateProductPage />)}
-                    />
-                ),
-            },
-            {
-                path: "products/:productId",
-                element: withSuspense(<ProductDetailPage />),
-            },
-            {
-                path: "products/:productId/update",
-                element: (
-                    <CheckPermissionRole
-                        element={withSuspense(<UpdateProductPage />)}
-                    />
-                ),
+                path: "*",
+                element: withSuspense(<Error404 />),
             },
         ],
-    },
-    {
-        path: "*",
-        element: withSuspense(<Error404 />),
     },
 ];
 

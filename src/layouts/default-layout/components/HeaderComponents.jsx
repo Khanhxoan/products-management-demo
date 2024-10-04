@@ -1,24 +1,23 @@
-import * as React from 'react';
+import * as React from "react";
 
-import Stack from '@mui/material/Stack';
+import { Grid2 } from "@mui/material";
 
-import NavbarTitle from './NavbarTitle';
+import NavbarTitle from "./NavbarTitle";
 
 export default function Header() {
     return (
-        <Stack
+        <Grid2
             direction="row"
             sx={{
                 display: { xs: "none", md: "flex" },
                 width: "100%",
                 alignItems: { xs: "flex-start", md: "center" },
                 justifyContent: "space-between",
-                maxWidth: { sm: "100%", md: "1700px" },
                 pt: 1.5,
             }}
             spacing={2}
         >
             <NavbarTitle />
-        </Stack>
+        </Grid2>
     );
 }

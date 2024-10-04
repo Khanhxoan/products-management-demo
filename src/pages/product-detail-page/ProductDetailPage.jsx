@@ -1,17 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import {
-  useDispatch,
-  useSelector,
-} from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
-import HeaderPages from '@/components/HeaderPages';
-import ProductDetailComponent
-  from '@/components/products/product-detail/ProductDetailComponent';
-import { TITLE_PAGES } from '@/constants/contants';
-import { getProductDetailThunk } from '@/stores/productSlice/productSlice';
-import { Grid2 } from '@mui/material';
+import HeaderPages from "@/components/HeaderPages";
+import ProductDetailComponent from "@/components/products/product-detail/ProductDetailComponent";
+import { TITLE_PAGES } from "@/constants/contants";
+import { getProductDetailThunk } from "@/stores/productSlice/productSlice";
+import { Grid2 } from "@mui/material";
 
 const ProductDetailPage = () => {
     const { productDetail } = useSelector((state) => state.products);
@@ -22,7 +18,7 @@ const ProductDetailPage = () => {
         if (!productDetail._id || productDetail._id !== productId) {
             dispactch(getProductDetailThunk(productId));
         }
-    }, []);
+    }, [productDetail, productId]);
 
     return (
         <Grid2

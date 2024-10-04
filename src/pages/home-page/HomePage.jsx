@@ -1,29 +1,9 @@
-import { useEffect } from 'react';
-
-import { getListProducts } from '@/apis/product';
-import HeaderPages from '@/components/HeaderPages';
-import ProductListComponent
-  from '@/components/products/product-list/ProductListComponent';
-import {
-  MODE_LIST_PRODUCTS,
-  TITLE_PAGES,
-} from '@/constants/contants';
-import { Grid2 } from '@mui/material';
+import HeaderPages from "@/components/HeaderPages";
+import ProductListComponent from "@/components/products/product-list/ProductListComponent";
+import { MODE_LIST_PRODUCTS, TITLE_PAGES } from "@/constants/contants";
+import { Grid2 } from "@mui/material";
 
 const HomePage = () => {
-    const handleGetListProducts = async () => {
-        try {
-            const response = await getListProducts(1, 10);
-            const listProducts = response.data?.products ?? [];
-            console.log(listProducts);
-        } catch (err) {
-            console.log(err);
-        }
-    };
-    useEffect(() => {
-        handleGetListProducts();
-    }, []);
-
     return (
         <Grid2
             direction="column"

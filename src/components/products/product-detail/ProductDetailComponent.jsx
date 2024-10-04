@@ -1,21 +1,18 @@
-import React from 'react';
+import React from "react";
 
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import EditIcon from '@mui/icons-material/Edit';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import {
-  Button,
-  CircularProgress,
-  Grid2,
-  Typography,
-} from '@mui/material';
+import { ROLE_USERS } from "@/constants/contants";
+import EditIcon from "@mui/icons-material/Edit";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { Button, CircularProgress, Grid2, Typography } from "@mui/material";
 
 const ProductDetailComponent = ({ productDetailData }) => {
-    const isAdmin = true;
+    const { user } = useSelector((state) => state.auth);
+    const isAdmin = String(user?.role).toUpperCase() === ROLE_USERS.ADMIN;
     const navigate = useNavigate();
-    const { loadingDetailProduct } = useSelector((state) => state.products);
+    const { loadingDetailProduct, errorGetDetail } = useSelector((state) => state.products);
 
     if (loadingDetailProduct) {
         return (
@@ -33,6 +30,14 @@ const ProductDetailComponent = ({ productDetailData }) => {
                     Fetching Data
                 </Typography>
             </Grid2>
+        );
+    }
+
+    if (errorGetDetail && !productDetailData._id) {
+        return (
+            <Typography variant="h4" fontWeight={500} textAlign="center">
+                Not found product!
+            </Typography>
         );
     }
 
@@ -61,21 +66,12 @@ const ProductDetailComponent = ({ productDetailData }) => {
                     <Typography variant="h3" fontWeight={600} color="#48567d">
                         {productDetailData.productName}
                     </Typography>
-                    <Typography
-                        variant="h6"
-                        fontWeight={400}
-                        color="#087c12"
-                        fontStyle="italic"
-                    >
+                    <Typography variant="h6" fontWeight={400} color="#087c12" fontStyle="italic">
                         Prices and promotions at: Ha Noi
                     </Typography>
                     <Grid2 container direction="column">
                         <Grid2 container alignItems="center" gap="10px">
-                            <Typography
-                                variant="h6"
-                                fontSize="18px"
-                                fontWeight={600}
-                            >
+                            <Typography variant="h6" fontSize="18px" fontWeight={600}>
                                 Description:
                             </Typography>
                             <Typography variant="h6" fontSize="18px">
@@ -83,11 +79,7 @@ const ProductDetailComponent = ({ productDetailData }) => {
                             </Typography>
                         </Grid2>
                         <Grid2 container alignItems="center" gap="10px">
-                            <Typography
-                                variant="h6"
-                                fontSize="18px"
-                                fontWeight={600}
-                            >
+                            <Typography variant="h6" fontSize="18px" fontWeight={600}>
                                 Category:
                             </Typography>
                             <Typography variant="h6" fontSize="18px">
@@ -95,37 +87,22 @@ const ProductDetailComponent = ({ productDetailData }) => {
                             </Typography>
                         </Grid2>
                         <Grid2 container alignItems="center" gap="10px">
-                            <Typography
-                                variant="h6"
-                                fontSize="18px"
-                                fontWeight={600}
-                            >
+                            <Typography variant="h6" fontSize="18px" fontWeight={600}>
                                 Price:
                             </Typography>
                             <Typography variant="h6" fontSize="18px">
-                                {productDetailData.price.toLocaleString(
-                                    "en-US"
-                                )}{" "}
-                                VND
+                                {productDetailData.price.toLocaleString("en-US")} VND
                             </Typography>
                         </Grid2>
                     </Grid2>
                 </Grid2>
                 <Grid2>
                     {!isAdmin ? (
-                        <Button
-                            variant="outlined"
-                            startIcon={<ShoppingCartIcon />}
-                            onClick={() => navigate("/")}
-                        >
+                        <Button variant="outlined" startIcon={<ShoppingCartIcon />} onClick={() => navigate("/")}>
                             Add to card
                         </Button>
                     ) : (
-                        <Button
-                            variant="outlined"
-                            endIcon={<EditIcon />}
-                            onClick={() => navigate("update")}
-                        >
+                        <Button variant="outlined" endIcon={<EditIcon />} onClick={() => navigate("update")}>
                             Edit product
                         </Button>
                     )}

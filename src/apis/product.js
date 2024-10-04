@@ -1,6 +1,6 @@
-import qs from 'qs';
+import qs from "qs";
 
-import { defaultAxios } from '../libs/axios/axios';
+import { defaultAxios } from "../libs/axios/axios";
 
 export const getListProducts = async () => {
     const params = { page: 1, size: 999999999 };
@@ -16,16 +16,16 @@ export const getProductDetail = async (productId) => {
 };
 
 export const createProduct = async (product) => {
-    const response = await defaultAxios.post("", product);
+    const response = await defaultAxios.post("/products", product);
     return response.data;
 };
 
-export const updateProduct = async ({ productId, product }) => {
-    const response = await defaultAxios.put(`""/${productId}`, product);
+export const updateProduct = async ({ productId, payloadUpdate }) => {
+    const response = await defaultAxios.put(`/products/${productId}`, payloadUpdate);
     return response.data;
 };
 
 export const deleteProduct = async (productId) => {
-    const response = await defaultAxios.delete(`""/${productId}`);
-    return response.data;
+    await defaultAxios.delete(`/products/${productId}`);
+    return productId;
 };

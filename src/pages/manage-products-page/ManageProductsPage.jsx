@@ -1,17 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-import HeaderPages from '@/components/HeaderPages';
-import ProductListComponent
-  from '@/components/products/product-list/ProductListComponent';
-import {
-  MODE_LIST_PRODUCTS,
-  TITLE_PAGES,
-} from '@/constants/contants';
-import AddIcon from '@mui/icons-material/Add';
-import {
-  Button,
-  Grid2,
-} from '@mui/material';
+import HeaderPages from "@/components/HeaderPages";
+import ProductListComponent from "@/components/products/product-list/ProductListComponent";
+import { MODE_LIST_PRODUCTS, TITLE_PAGES } from "@/constants/contants";
+import AddIcon from "@mui/icons-material/Add";
+import { Button, Grid2 } from "@mui/material";
 
 const ManageProductsPage = () => {
     const navigate = useNavigate();
@@ -33,7 +26,6 @@ const ManageProductsPage = () => {
                     sx={{
                         backgroundColor: "#48567d",
                         color: "white",
-                        marginRight: "20px",
                     }}
                     onClick={() => navigate("create")}
                 >

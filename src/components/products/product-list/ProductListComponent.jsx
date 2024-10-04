@@ -1,61 +1,25 @@
-import {
-  useEffect,
-  useState,
-} from 'react';
+import { useEffect, useState } from "react";
 
-import {
-  useDispatch,
-  useSelector,
-} from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import { MODE_LIST_PRODUCTS } from '@/constants/contants';
-import {
-  getProductDetailAction,
-  getProductsThunk,
-} from '@/stores/productSlice/productSlice';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import {
-  Button,
-  CircularProgress,
-  Grid2,
-  styled,
-  Typography,
-} from '@mui/material';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-
-const columns = [
-    { id: "productName", label: "Product", minWidth: 170 },
-    { id: "category", label: "Category", minWidth: 100 },
-    { id: "imgUrl", label: "Image", minWidth: 60 },
-    {
-        id: "information",
-        label: "Information",
-        minWidth: 170,
-    },
-    {
-        id: "price",
-        label: "Price",
-        minWidth: 60,
-        align: "right",
-        format: (value) => `${value.toLocaleString("en-US")} VND`,
-    },
-    {
-        id: "action",
-        label: "Actions",
-        minWidth: 170,
-        align: "center",
-    },
-];
+import CustomDialog from "@/components/custom-dialog/CustomDialog";
+import LoadingComponent from "@/components/loading-component/LoadingComponent";
+import { columns, MODE_LIST_PRODUCTS, TOAST_STATUS } from "@/constants/contants";
+import { deleteProductThunk, getProductDetailAction, getProductsThunk } from "@/stores/productSlice/productSlice";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { LoadingButton } from "@mui/lab";
+import { Button, styled, Typography } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -72,11 +36,11 @@ const ProductListComponent = ({ mode }) => {
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
+    const [productDeleted, setProductDeleted] = useState({ productId: "", productName: "" });
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { products, loadingGetProducts, error } = useSelector(
-        (state) => state.products
-    );
+    const { products, loadingGetProducts, error, loadingDelete } = useSelector((state) => state.products);
 
     useEffect(() => {
         dispatch(getProductsThunk());
@@ -91,23 +55,23 @@ const ProductListComponent = ({ mode }) => {
         setPage(0);
     };
 
+    const handleSubmitDeleteProduct = async () => {
+        try {
+            const resultAction = await dispatch(deleteProductThunk(productDeleted.productId));
+            if (deleteProductThunk.fulfilled.match(resultAction)) {
+                notify("Delete product success!", TOAST_STATUS.SUCCESS);
+            }
+        } catch (err) {
+            notify("Delete product fail!", TOAST_STATUS.ERORR);
+        }
+    };
+
     if (loadingGetProducts) {
-        return (
-            <Grid2
-                direction="column"
-                container
-                justifyContent="center"
-                alignItems="center"
-                width="100%"
-                height="100%"
-                gap="30px"
-            >
-                <CircularProgress size={80} />
-                <Typography variant="h4" fontWeight={500} textAlign="center">
-                    Fetching Data
-                </Typography>
-            </Grid2>
-        );
+        return <LoadingComponent contentLoading="Fetching Data" />;
+    }
+
+    if (loadingDelete) {
+        return <LoadingComponent contentLoading="Deleting product" />;
     }
 
     if ((products ?? []).length === 0) {
@@ -135,7 +99,7 @@ const ProductListComponent = ({ mode }) => {
                 borderColor: "#dadfe8",
             }}
         >
-            <TableContainer sx={{ maxHeight: "700px", minHeight: "500px" }}>
+            <TableContainer sx={{ maxHeight: "600px", minHeight: "500px" }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
@@ -151,108 +115,97 @@ const ProductListComponent = ({ mode }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {products
-                            .slice(
-                                page * rowsPerPage,
-                                page * rowsPerPage + rowsPerPage
-                            )
-                            .map((row) => {
-                                return (
-                                    <TableRow
-                                        hover
-                                        role="checkbox"
-                                        tabIndex={-1}
-                                        key={row.code}
-                                        sx={{ height: "60px" }}
-                                    >
-                                        {columns.map((column) => {
-                                            const value = row[column.id];
-                                            if (column.id === "imgUrl") {
-                                                return (
-                                                    <TableCell
-                                                        key={column.id}
-                                                        align={column.align}
-                                                    >
-                                                        <img
-                                                            src={row[column.id]}
-                                                            height="40px"
-                                                            width="fit-content"
-                                                        />
-                                                    </TableCell>
-                                                );
-                                            }
-                                            if (column.id === "action") {
-                                                const productId = row["_id"];
-                                                return (
-                                                    <TableCell
-                                                        key={column.id}
-                                                        align={column.align}
-                                                    >
-                                                        <Button
-                                                            sx={{
-                                                                minWidth:
-                                                                    "40px",
-                                                            }}
-                                                            onClick={() => {
-                                                                const productDetail =
-                                                                    { ...row };
-                                                                dispatch(
-                                                                    getProductDetailAction(
-                                                                        productDetail
-                                                                    )
-                                                                );
-                                                                const route =
-                                                                    isManage
-                                                                        ? `${productId}`
-                                                                        : `products/${productId}`;
-                                                                navigate(route);
-                                                            }}
-                                                        >
-                                                            <VisibilityIcon />
-                                                        </Button>
-                                                        {isManage && (
-                                                            <>
-                                                                <Button
-                                                                    sx={{
-                                                                        minWidth:
-                                                                            "40px",
-                                                                    }}
-                                                                    onClick={() =>
-                                                                        navigate(
-                                                                            `${productId}/update`
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <EditIcon />
-                                                                </Button>
-                                                                <Button
-                                                                    sx={{
-                                                                        minWidth:
-                                                                            "40px",
-                                                                    }}
-                                                                >
-                                                                    <DeleteIcon />
-                                                                </Button>
-                                                            </>
-                                                        )}
-                                                    </TableCell>
-                                                );
-                                            }
+                        {products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                            return (
+                                <TableRow hover role="checkbox" tabIndex={-1} key={row["_id"]} sx={{ height: "60px" }}>
+                                    {columns.map((column) => {
+                                        const value = row[column.id];
+                                        if (column.id === "imgUrl") {
                                             return (
-                                                <TableCell
-                                                    key={column.id}
-                                                    align={column.align}
-                                                >
-                                                    {column.format &&
-                                                    typeof value === "number"
-                                                        ? column.format(value)
-                                                        : value}
+                                                <TableCell key={column.id} align={column.align}>
+                                                    <img src={row[column.id]} height="40px" width="fit-content" />
                                                 </TableCell>
                                             );
-                                        })}
-                                    </TableRow>
-                                );
-                            })}
+                                        }
+                                        if (column.id === "action") {
+                                            const productId = row["_id"];
+                                            return (
+                                                <TableCell key={column.id} align={column.align}>
+                                                    <Button
+                                                        sx={{
+                                                            minWidth: "40px",
+                                                        }}
+                                                        onClick={() => {
+                                                            dispatch(
+                                                                getProductDetailAction({
+                                                                    ...row,
+                                                                })
+                                                            );
+                                                            const route = isManage
+                                                                ? `${productId}`
+                                                                : `products/${productId}`;
+                                                            navigate(route);
+                                                        }}
+                                                    >
+                                                        <VisibilityIcon />
+                                                    </Button>
+                                                    {isManage && (
+                                                        <>
+                                                            <Button
+                                                                sx={{
+                                                                    minWidth: "40px",
+                                                                }}
+                                                                onClick={() => {
+                                                                    dispatch(
+                                                                        getProductDetailAction({
+                                                                            ...row,
+                                                                        })
+                                                                    );
+                                                                    navigate(`${productId}/update`);
+                                                                }}
+                                                            >
+                                                                <EditIcon />
+                                                            </Button>
+                                                            {
+                                                                <LoadingButton
+                                                                    loading={loadingDelete && productId}
+                                                                    endIcon={<DeleteIcon />}
+                                                                    loadingPosition="end"
+                                                                    sx={{
+                                                                        minWidth: "40px",
+                                                                        span: { marginLeft: 0 },
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        setProductDeleted(row["productName"]);
+                                                                        setIsOpenDeleteDialog(true);
+                                                                    }}
+                                                                ></LoadingButton>
+                                                            }
+                                                        </>
+                                                    )}
+                                                </TableCell>
+                                            );
+                                        }
+                                        if (column.id === "productName") {
+                                            return (
+                                                <TableCell key={column.id} align={column.align}>
+                                                    <Typography fontSize="0.875rem" fontWeight="600">
+                                                        {value}
+                                                    </Typography>
+                                                </TableCell>
+                                            );
+                                        }
+                                        return (
+                                            <TableCell key={column.id} align={column.align}>
+                                                {column.format && typeof value === "number"
+                                                    ? column.format(value)
+                                                    : value}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -264,6 +217,13 @@ const ProductListComponent = ({ mode }) => {
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            <CustomDialog
+                open={isOpenDeleteDialog}
+                handleClose={() => setIsOpenDeleteDialog(false)}
+                dialogTitle="Are you sure to delete this product?"
+                dialogContent={`Product: ${productDeleted}`}
+                handleSubmit={handleSubmitDeleteProduct}
             />
         </Paper>
     );
