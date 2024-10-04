@@ -1,14 +1,15 @@
-import qs from "qs";
+import qs from 'qs';
 
-import { defaultAxios } from "../libs/axios/axios";
+import { defaultAxios } from '../libs/axios/axios';
 
 export const getListProducts = async () => {
     const params = { page: 1, size: 999999999 };
-    return await defaultAxios.get(
+    const response = await defaultAxios.get(
         `/products?${qs.stringify(params, {
             indices: false,
         })}`
     );
+    return response.data;
 };
 
 export const getProductDetail = async (productId) => {

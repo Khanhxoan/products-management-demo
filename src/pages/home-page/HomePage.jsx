@@ -1,7 +1,8 @@
-import HeaderPages from "@/components/HeaderPages";
 import ProductListComponent from "@/components/products/product-list/ProductListComponent";
 import { MODE_LIST_PRODUCTS, TITLE_PAGES } from "@/constants/contants";
 import { Grid2 } from "@mui/material";
+
+import HeaderPages from "../../components/HeaderPages";
 
 const HomePage = () => {
     return (

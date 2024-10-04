@@ -1,6 +1,15 @@
-import { createProduct, deleteProduct, getListProducts, getProductDetail, updateProduct } from "@/apis/product";
-import { initFormValue } from "@/constants/contants";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createProduct,
+  deleteProduct,
+  getListProducts,
+  getProductDetail,
+  updateProduct,
+} from '@/apis/product';
+import { initFormValue } from '@/constants/contants';
+import {
+  createAsyncThunk,
+  createSlice,
+} from '@reduxjs/toolkit';
 
 export const getProductsThunk = createAsyncThunk("products/getProducts", getListProducts);
 
@@ -47,7 +56,7 @@ const productSlice = createSlice({
             })
             .addCase(getProductsThunk.fulfilled, (state, action) => {
                 state.loadingGetProducts = false;
-                state.products = action.payload.data?.products ?? [];
+                state.products = action.payload?.products ?? [];
             })
             .addCase(getProductsThunk.rejected, (state, action) => {
                 state.loadingGetProducts = false;

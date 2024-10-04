@@ -1,5 +1,12 @@
-import { login, logout, register } from "@/apis/auth";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  login,
+  logout,
+  register,
+} from '@/apis/auth';
+import {
+  createAsyncThunk,
+  createSlice,
+} from '@reduxjs/toolkit';
 
 export const loginThunk = createAsyncThunk("auth/login", login);
 
@@ -15,7 +22,12 @@ const authSlice = createSlice({
         loadingLogout: false,
         error: null,
     },
-    reducers: {},
+    reducers: {
+        clearUserLogout(state) {
+            state.user = null;
+            state.loadingLogout = false;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(loginThunk.pending, (state) => {
@@ -46,5 +58,7 @@ const authSlice = createSlice({
             });
     },
 });
+
+export const { clearUserLogout } = authSlice.actions;
 
 export default authSlice.reducer;

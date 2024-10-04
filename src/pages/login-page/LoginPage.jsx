@@ -1,17 +1,33 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import * as yup from "yup";
+import {
+  Controller,
+  useForm,
+} from 'react-hook-form';
+import {
+  useDispatch,
+  useSelector,
+} from 'react-redux';
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom';
+import * as yup from 'yup';
 
-import { notify } from "@/components/custom-toast/custom-toast";
-import { msgRequired, TOAST_STATUS } from "@/constants/contants";
-import { loginThunk } from "@/stores/authSlice/authSlice";
-import { yupResolver } from "@hookform/resolvers/yup";
-import LoginIcon from "@mui/icons-material/Login";
-import { LoadingButton } from "@mui/lab";
-import { Grid2, TextField, Typography } from "@mui/material";
+import { notify } from '@/components/custom-toast/custom-toast';
+import {
+  msgRequired,
+  TOAST_STATUS,
+} from '@/constants/contants';
+import { loginThunk } from '@/stores/authSlice/authSlice';
+import { yupResolver } from '@hookform/resolvers/yup';
+import LoginIcon from '@mui/icons-material/Login';
+import { LoadingButton } from '@mui/lab';
+import {
+  Grid2,
+  TextField,
+  Typography,
+} from '@mui/material';
 
 const LoginPage = () => {
     const dispatch = useDispatch();
@@ -33,13 +49,15 @@ const LoginPage = () => {
     }, [user]);
 
     const onSubmit = async (data) => {
-        notify("Login successfully!", TOAST_STATUS.SUCCESS);
         const payloadLogin = { ...data };
         try {
             const resultAction = await dispatch(loginThunk(payloadLogin));
             if (loginThunk.fulfilled.match(resultAction)) {
                 notify("Login successfully!", TOAST_STATUS.SUCCESS);
                 navigate("/");
+            }
+            if (loginThunk.rejected.match(resultAction)) {
+                notify("Login fail!", TOAST_STATUS.ERORR);
             }
         } catch (err) {
             notify("Login fail!", TOAST_STATUS.ERORR);

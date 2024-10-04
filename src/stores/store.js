@@ -1,11 +1,21 @@
-import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from "redux-persist";
-import persistReducer from "redux-persist/es/persistReducer";
-import persistStore from "redux-persist/es/persistStore";
-import storage from "redux-persist/lib/storage";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from 'redux-persist';
+import persistReducer from 'redux-persist/es/persistReducer';
+import persistStore from 'redux-persist/es/persistStore';
+import storage from 'redux-persist/lib/storage';
 
-import authReducer from "@/stores/authSlice/authSlice";
-import productReducer from "@/stores/productSlice/productSlice";
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import authReducer from '@/stores/authSlice/authSlice';
+import productReducer from '@/stores/productSlice/productSlice';
+import {
+  combineReducers,
+  configureStore,
+} from '@reduxjs/toolkit';
 
 const rootReducer = combineReducers({
     products: productReducer,

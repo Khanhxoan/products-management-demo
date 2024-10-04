@@ -1,10 +1,10 @@
-import axios from "axios";
-import qs from "qs";
-import { useDispatch } from "react-redux";
+import axios from 'axios';
+import qs from 'qs';
 
-import { logoutThunk } from "@/stores/authSlice/authSlice";
+import { logout } from '@/apis/auth';
+import { clearUserLogout } from '@/stores/authSlice/authSlice';
 
-const baseURL = "http://localhost:9001";
+const baseURL = "https://product-management-server-expressjs.vercel.app";
 
 export const defaultAxios = axios.create({
     baseURL: baseURL,
@@ -17,6 +17,14 @@ export const defaultAxios = axios.create({
         serialize: (params) => qs.stringify(params, { arrayFormat: "repeat", indices: false }),
     },
 });
+const handleLogout = async () => {
+    try {
+        const { default: store } = await import("@/stores/store");
+        await logout();
+        store.dispatch(clearUserLogout());
+        window.location.href = "/login";
+    } catch (err) {}
+};
 
 // handle toke expired
 defaultAxios.interceptors.response.use(
@@ -24,13 +32,10 @@ defaultAxios.interceptors.response.use(
         return response;
     },
     (error) => {
-        const dispatch = useDispatch();
         const { response } = error;
         if (response && response.status === 401) {
-            dispatch(logoutThunk);
-            window.location.href = "/login";
+            handleLogout();
         }
-
         return Promise.reject(error);
     }
 );

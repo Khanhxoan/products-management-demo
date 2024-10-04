@@ -1,33 +1,46 @@
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import * as yup from "yup";
+import {
+  Controller,
+  useForm,
+} from 'react-hook-form';
+import {
+  useDispatch,
+  useSelector,
+} from 'react-redux';
+import {
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
+import * as yup from 'yup';
 
 import {
-    CategoryOptions,
-    convertMoneyToNumber,
-    convertNumberToMoney,
-    MODE_PRODUCT_FORM,
-    msgRequired,
-    TOAST_STATUS,
-} from "@/constants/contants";
-import { createProductThunk, updateFormValueCU, updateProductThunk } from "@/stores/productSlice/productSlice";
-import { yupResolver } from "@hookform/resolvers/yup";
-import SaveIcon from "@mui/icons-material/Save";
-import { LoadingButton } from "@mui/lab";
+  CategoryOptions,
+  convertMoneyToNumber,
+  convertNumberToMoney,
+  MODE_PRODUCT_FORM,
+  msgRequired,
+  TOAST_STATUS,
+} from '@/constants/contants';
 import {
-    Button,
-    FormControl,
-    Grid2,
-    InputLabel,
-    MenuItem,
-    OutlinedInput,
-    Select,
-    TextField,
-    Typography,
-} from "@mui/material";
+  createProductThunk,
+  updateFormValueCU,
+  updateProductThunk,
+} from '@/stores/productSlice/productSlice';
+import { yupResolver } from '@hookform/resolvers/yup';
+import SaveIcon from '@mui/icons-material/Save';
+import { LoadingButton } from '@mui/lab';
+import {
+  Button,
+  FormControl,
+  Grid2,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
 
-import { notify } from "../custom-toast/custom-toast";
+import { notify } from '../custom-toast/custom-toast';
 
 const CUProductComponent = ({ mode }) => {
     const dispatch = useDispatch();
@@ -65,6 +78,9 @@ const CUProductComponent = ({ mode }) => {
             if (createProductThunk.fulfilled.match(resultAction)) {
                 notify("Create product success!", TOAST_STATUS.SUCCESS);
                 navigate("/products");
+            }
+            if (createProductThunk.rejected.match(resultAction)) {
+                notify("Create product fail!", TOAST_STATUS.ERORR);
             }
         } catch (err) {
             notify("Create product fail!", TOAST_STATUS.ERORR);

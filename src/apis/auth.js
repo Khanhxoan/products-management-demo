@@ -1,4 +1,4 @@
-import { defaultAxios } from "@/libs/axios/axios";
+import { defaultAxios } from '@/libs/axios/axios';
 
 export const login = async (payload) => {
     const response = await defaultAxios.post("/auth/login", payload);
@@ -9,5 +9,6 @@ export const register = async (userData) => {
     return response.data;
 };
 export const logout = async () => {
-    return await defaultAxios.post("/auth/logout");
+    const response = await defaultAxios.post("/auth/logout");
+    return response.data;
 };

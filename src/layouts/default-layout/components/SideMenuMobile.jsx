@@ -1,22 +1,25 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import {
+  useDispatch,
+  useSelector,
+} from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import { notify } from "@/components/custom-toast/custom-toast";
-import LoadingComponent from "@/components/loading-component/LoadingComponent";
-import { TOAST_STATUS } from "@/constants/contants";
-import { logoutThunk } from "@/stores/authSlice/authSlice";
-import LoginIcon from "@mui/icons-material/Login";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import Drawer, { drawerClasses } from "@mui/material/Drawer";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import { notify } from '@/components/custom-toast/custom-toast';
+import LoadingComponent from '@/components/loading-component/LoadingComponent';
+import { TOAST_STATUS } from '@/constants/contants';
+import { logoutThunk } from '@/stores/authSlice/authSlice';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Drawer, { drawerClasses } from '@mui/material/Drawer';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
-import MenuContent from "./MenuContent";
+import MenuContent from './MenuContent';
 
 export default function SideMenuMobile({ open, toggleDrawer }) {
     const { user, loadingLogout } = useSelector((state) => state.auth);
@@ -26,7 +29,7 @@ export default function SideMenuMobile({ open, toggleDrawer }) {
 
     const handleLogout = async () => {
         try {
-            const resultAction = dispatch(logoutThunk);
+            const resultAction = dispatch(logoutThunk());
             if (logoutThunk.fulfilled.match(resultAction)) {
                 notify("Logout successfully!", TOAST_STATUS.SUCCESS);
                 navigate("/login");
@@ -64,15 +67,20 @@ export default function SideMenuMobile({ open, toggleDrawer }) {
                                 <Avatar
                                     sizes="small"
                                     alt="Riley Carter"
-                                    src="/static/images/avatar/7.jpg"
+                                    src={user?.avatarUrl}
                                     sx={{ width: 24, height: 24 }}
                                 />
                                 <Typography component="p" variant="h6">
-                                    Riley Carter
+                                    {user?.username}
                                 </Typography>
                             </>
                         ) : (
-                            <Button sx={{ width: "100%", height: "100%" }} variant="outlined" startIcon={<LoginIcon />}>
+                            <Button
+                                sx={{ width: "100%", height: "100%" }}
+                                onClick={() => navigate("/login")}
+                                variant="outlined"
+                                startIcon={<LoginIcon />}
+                            >
                                 Login
                             </Button>
                         )}

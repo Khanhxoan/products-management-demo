@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-        "baseUrl": ".", // Chỉ định thư mục gốc của dự án
+        "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"]
         }
     },
-    "include": ["src/**/*"] // Bao gồm tất cả các file trong thư mục src
+    "include": ["src/**/*"]
 }

@@ -1,25 +1,12 @@
-import React, { useEffect } from "react";
+import React from 'react';
 
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-
-import HeaderPages from "@/components/HeaderPages";
-import ProductDetailComponent from "@/components/products/product-detail/ProductDetailComponent";
-import { TITLE_PAGES } from "@/constants/contants";
-import { getProductDetailThunk } from "@/stores/productSlice/productSlice";
-import { Grid2 } from "@mui/material";
+import HeaderPages from '@/components/HeaderPages';
+import ProductDetailComponent
+  from '@/components/products/product-detail/ProductDetailComponent';
+import { TITLE_PAGES } from '@/constants/contants';
+import { Grid2 } from '@mui/material';
 
 const ProductDetailPage = () => {
-    const { productDetail } = useSelector((state) => state.products);
-    const { productId } = useParams();
-    const dispactch = useDispatch();
-
-    useEffect(() => {
-        if (!productDetail._id || productDetail._id !== productId) {
-            dispactch(getProductDetailThunk(productId));
-        }
-    }, [productDetail, productId]);
-
     return (
         <Grid2
             direction="row"
@@ -35,7 +22,7 @@ const ProductDetailPage = () => {
                 <HeaderPages title={TITLE_PAGES.PRODUCT_DETAIL} />
             </Grid2>
             <Grid2 width="100%" height="100%">
-                <ProductDetailComponent productDetailData={productDetail} />
+                <ProductDetailComponent />
             </Grid2>
         </Grid2>
     );

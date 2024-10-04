@@ -1,25 +1,45 @@
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import {
+  useDispatch,
+  useSelector,
+} from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import CustomDialog from "@/components/custom-dialog/CustomDialog";
-import LoadingComponent from "@/components/loading-component/LoadingComponent";
-import { columns, MODE_LIST_PRODUCTS, TOAST_STATUS } from "@/constants/contants";
-import { deleteProductThunk, getProductDetailAction, getProductsThunk } from "@/stores/productSlice/productSlice";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { LoadingButton } from "@mui/lab";
-import { Button, styled, Typography } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+import CustomDialog from '@/components/custom-dialog/CustomDialog';
+import { notify } from '@/components/custom-toast/custom-toast';
+import LoadingComponent from '@/components/loading-component/LoadingComponent';
+import {
+  columns,
+  MODE_LIST_PRODUCTS,
+  TOAST_STATUS,
+} from '@/constants/contants';
+import {
+  deleteProductThunk,
+  getProductDetailAction,
+  getProductsThunk,
+} from '@/stores/productSlice/productSlice';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { LoadingButton } from '@mui/lab';
+import {
+  Button,
+  styled,
+  Typography,
+} from '@mui/material';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -55,16 +75,17 @@ const ProductListComponent = ({ mode }) => {
         setPage(0);
     };
 
-    const handleSubmitDeleteProduct = async () => {
+    const handleSubmitDeleteProduct = useCallback(async () => {
         try {
             const resultAction = await dispatch(deleteProductThunk(productDeleted.productId));
             if (deleteProductThunk.fulfilled.match(resultAction)) {
                 notify("Delete product success!", TOAST_STATUS.SUCCESS);
+                setIsOpenDeleteDialog(false);
             }
         } catch (err) {
             notify("Delete product fail!", TOAST_STATUS.ERORR);
         }
-    };
+    });
 
     if (loadingGetProducts) {
         return <LoadingComponent contentLoading="Fetching Data" />;
@@ -176,7 +197,10 @@ const ProductListComponent = ({ mode }) => {
                                                                         span: { marginLeft: 0 },
                                                                     }}
                                                                     onClick={() => {
-                                                                        setProductDeleted(row["productName"]);
+                                                                        setProductDeleted({
+                                                                            productId: row["_id"],
+                                                                            productName: row["productName"],
+                                                                        });
                                                                         setIsOpenDeleteDialog(true);
                                                                     }}
                                                                 ></LoadingButton>
@@ -222,7 +246,7 @@ const ProductListComponent = ({ mode }) => {
                 open={isOpenDeleteDialog}
                 handleClose={() => setIsOpenDeleteDialog(false)}
                 dialogTitle="Are you sure to delete this product?"
-                dialogContent={`Product: ${productDeleted}`}
+                dialogContent={`Product: ${productDeleted.productName}`}
                 handleSubmit={handleSubmitDeleteProduct}
             />
         </Paper>
