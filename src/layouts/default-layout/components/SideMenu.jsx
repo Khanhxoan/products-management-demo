@@ -1,31 +1,23 @@
-import * as React from 'react';
+import * as React from "react";
 
-import {
-  useDispatch,
-  useSelector,
-} from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import { notify } from '@/components/custom-toast/custom-toast';
-import LoadingComponent from '@/components/loading-component/LoadingComponent';
-import { TOAST_STATUS } from '@/constants/contants';
-import { logoutThunk } from '@/stores/authSlice/authSlice';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import {
-  Button,
-  Grid2,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
-import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
+import { notify } from "@/components/custom-toast/custom-toast";
+import LoadingComponent from "@/components/loading-component/LoadingComponent";
+import { TOAST_STATUS } from "@/constants/contants";
+import { logoutThunk } from "@/stores/authSlice/authSlice";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Button, Grid2, IconButton, Tooltip } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import MuiDrawer, { drawerClasses } from "@mui/material/Drawer";
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 
-import MenuContent from './MenuContent';
+import MenuContent from "./MenuContent";
 
 const drawerWidth = 250;
 
@@ -51,7 +43,7 @@ export default function SideMenu() {
             const resultAction = await dispatch(logoutThunk());
             if (logoutThunk.fulfilled.match(resultAction)) {
                 notify("Logout successfully!", TOAST_STATUS.SUCCESS);
-                navigate("/login");
+                navigate("/");
             }
         } catch (err) {
             notify("Logout fail!", TOAST_STATUS.ERORR);

@@ -12,7 +12,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 
 const mainListItems = [
-    { text: "Home", icon: <HomeRoundedIcon />, url: "/" },
+    { text: "Home", icon: <HomeRoundedIcon />, url: "/", role: ROLE_USERS.USER },
     {
         text: "Manage Products",
         icon: <AnalyticsRoundedIcon />,
@@ -31,8 +31,14 @@ export default function MenuContent() {
         <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
             <List dense>
                 {mainListItems.map((item, index) => {
+                    const showForUser = item?.role !== ROLE_USERS.ADMIN;
+                    const showForAdmin = item?.role === ROLE_USERS.ADMIN;
                     return (
-                        <ListItem key={index} disablePadding sx={{ display: isAdmin ? "block" : "none" }}>
+                        <ListItem
+                            key={index}
+                            disablePadding
+                            sx={{ display: (showForUser && !isAdmin) || (showForAdmin && isAdmin) ? "block" : "none" }}
+                        >
                             <ListItemButton
                                 selected={location.pathname === item.url}
                                 sx={{
