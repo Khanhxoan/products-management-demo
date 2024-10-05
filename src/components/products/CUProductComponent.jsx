@@ -1,46 +1,33 @@
-import {
-  Controller,
-  useForm,
-} from 'react-hook-form';
-import {
-  useDispatch,
-  useSelector,
-} from 'react-redux';
-import {
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
-import * as yup from 'yup';
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import * as yup from "yup";
 
 import {
-  CategoryOptions,
-  convertMoneyToNumber,
-  convertNumberToMoney,
-  MODE_PRODUCT_FORM,
-  msgRequired,
-  TOAST_STATUS,
-} from '@/constants/contants';
+    CategoryOptions,
+    convertMoneyToNumber,
+    convertNumberToMoney,
+    MODE_PRODUCT_FORM,
+    msgRequired,
+    TOAST_STATUS,
+} from "@/constants/contants";
+import { createProductThunk, updateFormValueCU, updateProductThunk } from "@/stores/productSlice/productSlice";
+import { yupResolver } from "@hookform/resolvers/yup";
+import SaveIcon from "@mui/icons-material/Save";
+import { LoadingButton } from "@mui/lab";
 import {
-  createProductThunk,
-  updateFormValueCU,
-  updateProductThunk,
-} from '@/stores/productSlice/productSlice';
-import { yupResolver } from '@hookform/resolvers/yup';
-import SaveIcon from '@mui/icons-material/Save';
-import { LoadingButton } from '@mui/lab';
-import {
-  Button,
-  FormControl,
-  Grid2,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  TextField,
-  Typography,
-} from '@mui/material';
+    Button,
+    FormControl,
+    Grid2,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Select,
+    TextField,
+    Typography,
+} from "@mui/material";
 
-import { notify } from '../custom-toast/custom-toast';
+import { notify } from "../custom-toast/custom-toast";
 
 const CUProductComponent = ({ mode }) => {
     const dispatch = useDispatch();
@@ -116,6 +103,10 @@ const CUProductComponent = ({ mode }) => {
     };
     const handleChangeFieldValue = (field, value) => {
         setValue(field, value);
+    };
+
+    const handleCancel = () => {
+        navigate("/products");
     };
 
     const onSubmit = (data) => {
@@ -303,7 +294,9 @@ const CUProductComponent = ({ mode }) => {
                     </Grid2>
                 </Grid2>
                 <Grid2 container direction={"row"} width="100%" justifyContent={"center"} gap="20px">
-                    <Button variant="outlined">Cancel</Button>
+                    <Button variant="outlined" onClick={handleCancel}>
+                        Cancel
+                    </Button>
                     <LoadingButton
                         variant="contained"
                         onClick={handleSubmit(onSubmit)}
