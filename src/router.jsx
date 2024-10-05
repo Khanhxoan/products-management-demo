@@ -30,6 +30,16 @@ const CheckPermissionRole = ({ element }) => {
     }
 };
 
+const NavigateManagePage = ({ element }) => {
+    const { user } = useSelector((state) => state.auth);
+    const isAdmin = String(user?.role).toUpperCase() === ROLE_USERS.ADMIN;
+    if (isAdmin) {
+        return <Navigate to="/products" replace />;
+    } else {
+        return element;
+    }
+};
+
 const routeList = [
     {
         path: "/",
@@ -45,7 +55,7 @@ const routeList = [
                 children: [
                     {
                         path: "",
-                        element: withSuspense(<HomePage />),
+                        element: <NavigateManagePage element={withSuspense(<HomePage />)} />,
                     },
                     {
                         path: "products",
