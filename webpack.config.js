@@ -66,7 +66,7 @@ module.exports = {
         hot: true,
         open: true,
         devMiddleware: {
-            writeToDisk: true, // Thêm dòng này để ghi file vào thư mục dist
+            writeToDisk: true,
         },
     },
     mode: "production",

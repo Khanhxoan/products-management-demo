@@ -26,7 +26,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Vercel
-        uses: AmruthPillai/vercel-action@v20
+        uses: vercel/vercel-action
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
