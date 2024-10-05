@@ -1,6 +1,6 @@
 # .github/workflows/deploy.yml
 
-name: CI/CD for App
+name: CI/CD for App Demo
 
 on:
   push:
