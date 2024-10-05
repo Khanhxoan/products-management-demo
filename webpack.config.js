@@ -69,6 +69,6 @@ module.exports = {
             writeToDisk: true, // Thêm dòng này để ghi file vào thư mục dist
         },
     },
-    mode: "development",
+    mode: "production",
     devtool: "eval-source-map",
 };
