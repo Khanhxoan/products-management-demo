@@ -1,12 +1,12 @@
 # .github/workflows/deploy.yml
 
-name: CI/CD for React App
+name: CI/CD for App
 
 on:
   push:
     branches: 
       - main  
-    workflow_dispatch: 
+  workflow_dispatch: 
 jobs:
   build:
     runs-on: ubuntu-latest
