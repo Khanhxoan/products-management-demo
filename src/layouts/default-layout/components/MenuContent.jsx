@@ -31,13 +31,8 @@ export default function MenuContent() {
         <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
             <List dense>
                 {mainListItems.map((item, index) => {
-                    const showForUser = item?.role !== ROLE_USERS.ADMIN;
                     return (
-                        <ListItem
-                            key={index}
-                            disablePadding
-                            sx={{ display: showForUser || isAdmin ? "block" : "none" }}
-                        >
+                        <ListItem key={index} disablePadding sx={{ display: isAdmin ? "block" : "none" }}>
                             <ListItemButton
                                 selected={location.pathname === item.url}
                                 sx={{
